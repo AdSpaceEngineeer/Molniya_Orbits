@@ -1,0 +1,134 @@
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+
+# custom functions:
+
+def func_a(T, mu): #semi-major axis from give time period
+    return (mu*T**2/(4*math.pi**2))**(1/3) #a is fixed
+
+def func_e(rp, RE, a): #eccenctricity from perigee altitude, Earth radius and semi-major axis
+    return 1-(rp+RE)/a  #e can range from lowest corresponding value of rp to 0.5
+
+def func_i_pro(): #angle of inclination such that argument of perigee remains unchanged ("frozen")
+    return math.asin(np.sqrt(4/5)) #this function returns arcsin value for i in first quadrant i.e. for prograde orbit
+
+def func_longom_rate(a, mu, J2, R, i, e): #rate of change in longitude of ascending node or nodal precession/accesion rate
+    return (-3/2) * np.sqrt(mu/a**3) * J2 * (R**2/a**2) * math.cos(i)/(1-e**2)**2
+    
+#given conditions for Earth
+RE = 6370
+J2 = 0.00108
+muE = 398600
+day = 24*3600
+rp_min = 600
+rp_max = 40000
+steps = 100
+
+#Earth's Molinya orbit where eccentricity can be less than 0.5 [not recommended]
+T = day/3
+a = func_a(T, muE)
+i = func_i_pro() #since Molinya is a "frozen orbit" in terms of position of perigee
+
+rp_list = range(rp_min, rp_max, steps)
+e_list = np.zeros(int((rp_max-rp_min)/steps))
+longom_rate_list = np.zeros(int((rp_max-rp_min)/steps))
+
+n = 0
+for rp in rp_list:
+    e = func_e(rp, RE, a)
+    if e<0.0 : break
+    longom_rate_list[n] = func_longom_rate(a, muE, J2, RE, i, e)
+    #print(n, rp, e, longom_rate_list[n]*day*180/math.pi, i*180/math.pi)
+    n = n + 1
+
+rps = range(rp_min, rp_min+n*steps, steps)
+plt.plot(rps, longom_rate_list[:n]*day*180/math.pi)
+plt.xlabel("perigree altitude / km", fontsize = 8)
+plt.ylabel("nodal precession rate / deg per day", fontsize = 8)
+plt.title("Nodal precession vs Perigee | Earth Molniya Orbit | eccentricity > 0.0", fontsize = 10)
+plt.show()
+
+
+#Earth's Molinya orbit where eccentricity cannot be less than 0.5 [recommended]
+T = day/3
+a = func_a(T, muE)
+i = func_i_pro() #since Molinya is a "frozen orbit" in terms of position of perigee
+
+rp_list = range(rp_min, rp_max, steps)
+e_list = np.zeros(int((rp_max-rp_min)/steps))
+longom_rate_list = np.zeros(int((rp_max-rp_min)/steps))
+
+n = 0
+for rp in rp_list:
+    e = func_e(rp, RE, a)
+    if e<0.5 : break
+    longom_rate_list[n] = func_longom_rate(a, muE, J2, RE, i, e)
+    #print(n, rp, e, longom_rate_list[n]*day*180/math.pi, i*180/math.pi)
+    n = n + 1
+
+rps = range(rp_min, rp_min+n*steps, steps)
+plt.plot(rps, longom_rate_list[:n]*day*180/math.pi)
+plt.xlabel("perigree altitude / km", fontsize = 8)
+plt.ylabel("nodal precession rate / deg per day", fontsize = 8)
+plt.title("Nodal precession vs Perigee | Earth Molniya Orbit | eccentricity > 0.5", fontsize = 10)
+plt.show()
+
+
+#given conditions for Mars
+RM = 3390
+J2 = 0.00196
+muM = 42820
+day = 24*3600 + 39*60 + 35
+rp_min = 400
+rp_max = 40000
+steps = 100
+
+
+#Mars' Molinya orbit where eccentricity can be less than 0.5 [not recommended]
+T = day
+a = func_a(T, muE)
+i = func_i_pro() #since Molinya is a "frozen orbit" in terms of position of perigee
+
+rp_list = range(rp_min, rp_max, steps)
+e_list = np.zeros(int((rp_max-rp_min)/steps))
+longom_rate_list = np.zeros(int((rp_max-rp_min)/steps))
+
+n = 0
+for rp in rp_list:
+    e = func_e(rp, RE, a)
+    if e<0.0 : break
+    longom_rate_list[n] = func_longom_rate(a, muE, J2, RE, i, e)
+    #print(n, rp, e, longom_rate_list[n]*day*180/math.pi, i*180/math.pi)
+    n = n + 1
+
+rps = range(rp_min, rp_min+n*steps, steps)
+plt.plot(rps, longom_rate_list[:n]*day*180/math.pi)
+plt.xlabel("perigree altitude / km", fontsize = 8)
+plt.ylabel("nodal precession rate / deg per day", fontsize = 8)
+plt.title("Nodal precession vs Perigee | Mars Molniya Orbit | eccentricity > 0.0", fontsize = 10)
+plt.show()
+
+#Mars' Molinya orbit where eccentricity cannot be less than 0.5 [recommended]
+T = day
+a = func_a(T, muE)
+i = func_i_pro() #since Molinya is a "frozen orbit" in terms of position of perigee
+
+rp_list = range(rp_min, rp_max, steps)
+e_list = np.zeros(int((rp_max-rp_min)/steps))
+longom_rate_list = np.zeros(int((rp_max-rp_min)/steps))
+
+n = 0
+for rp in rp_list:
+    e = func_e(rp, RE, a)
+    if e<0.5 : break
+    longom_rate_list[n] = func_longom_rate(a, muE, J2, RE, i, e)
+    #print(n, rp, e, longom_rate_list[n]*day*180/math.pi, i*180/math.pi)
+    n = n + 1
+
+rps = range(rp_min, rp_min+n*steps, steps)
+plt.plot(rps, longom_rate_list[:n]*day*180/math.pi)
+plt.xlabel("perigree altitude / km", fontsize = 8)
+plt.ylabel("nodal precession rate / deg per day", fontsize = 8)
+plt.title("Nodal precession vs Perigee | Mars Molniya Orbit | eccentricity > 0.5", fontsize = 10)
+plt.show()
